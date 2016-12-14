@@ -183,6 +183,17 @@ return /******/ (function(modules) { // webpackBootstrap
 					return data.key !== key;
 				});
 			}
+		}, {
+			key: '_mousePosition',
+			value: function _mousePosition(e) {
+				if (this.props.fixedPosition) return {
+					mouseX: e.pageX - window.scrollX,
+					mouseY: e.pageY - window.scrollY
+				};else return {
+					mouseX: e.pageX,
+					mouseY: e.pageY
+				};
+			}
 
 			/**
 	   * Called while moving the mouse with the button down. Changes the boundaries
@@ -192,15 +203,19 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: '_openSelector',
 			value: function _openSelector(e) {
-				var w = Math.abs(this._mouseDownData.initialW - e.pageX);
-				var h = Math.abs(this._mouseDownData.initialH - e.pageY);
+				var _mousePosition2 = this._mousePosition(e),
+				    mouseX = _mousePosition2.mouseX,
+				    mouseY = _mousePosition2.mouseY;
+
+				var w = Math.abs(this._mouseDownData.initialW - mouseX);
+				var h = Math.abs(this._mouseDownData.initialH - mouseY);
 
 				this.setState({
 					isBoxSelecting: true,
 					boxWidth: w,
 					boxHeight: h,
-					boxLeft: Math.min(e.pageX, this._mouseDownData.initialW),
-					boxTop: Math.min(e.pageY, this._mouseDownData.initialH)
+					boxLeft: Math.min(mouseX, this._mouseDownData.initialW),
+					boxTop: Math.min(mouseY, this._mouseDownData.initialH)
 				});
 
 				if (this.props.selectOnMouseMove) this._throttledSelect(e);
@@ -214,7 +229,12 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: '_mouseDown',
 			value: function _mouseDown(e) {
+				var _mousePosition3 = this._mousePosition(e),
+				    mouseX = _mousePosition3.mouseX,
+				    mouseY = _mousePosition3.mouseY;
 				// Disable if target is control by react-dnd
+
+
 				if (!!e.target.draggable) return;
 
 				var node = _reactDom2.default.findDOMNode(this);
@@ -234,8 +254,8 @@ return /******/ (function(modules) { // webpackBootstrap
 						bottom: offsetData.offsetHeight,
 						right: offsetData.offsetWidth
 					}, {
-						top: e.pageY,
-						left: e.pageX,
+						top: mouseY,
+						left: mouseX,
 						offsetWidth: 0,
 						offsetHeight: 0
 					});
@@ -243,10 +263,10 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 
 				this._mouseDownData = {
-					boxLeft: e.pageX,
-					boxTop: e.pageY,
-					initialW: e.pageX,
-					initialH: e.pageY
+					boxLeft: mouseX,
+					boxTop: mouseY,
+					initialW: mouseX,
+					initialH: mouseY
 				};
 
 				if (this.props.preventDefault) e.preventDefault();
@@ -283,9 +303,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		}, {
 			key: '_selectElements',
 			value: function _selectElements(e) {
-				var currentItems = [];
-				var selectbox = _reactDom2.default.findDOMNode(this.refs.selectbox);
-				var tolerance = this.props.tolerance;
+				var currentItems = [],
+				    selectbox = _reactDom2.default.findDOMNode(this.refs.selectbox),
+				    tolerance = this.props.tolerance;
 
 
 				if (!selectbox) return;
@@ -532,7 +552,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	/**
 	 * lodash (Custom Build) <https://lodash.com/>

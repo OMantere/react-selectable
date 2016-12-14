@@ -63,21 +63,36 @@ class SelectableGroup extends React.Component {
 		this._registry = this._registry.filter(data => data.key !== key);
 	}
 
+    
+    _mousePosition (e) {
+        if(this.props.fixedPosition) 
+            return {
+                mouseX: e.pageX - window.scrollX,
+                mouseY: e.pageY - window.scrollY
+            }        
+        else
+            return {
+                mouseX: e.pageX,
+                mouseY: e.pageY
+            }
+    }
+
 
 	/**
 	 * Called while moving the mouse with the button down. Changes the boundaries
 	 * of the selection box
 	 */
 	_openSelector (e) {
-	    const w = Math.abs(this._mouseDownData.initialW - e.pageX);
-	    const h = Math.abs(this._mouseDownData.initialH - e.pageY);
+        const { mouseX, mouseY } = this._mousePosition(e);
+	    const w = Math.abs(this._mouseDownData.initialW - mouseX);
+	    const h = Math.abs(this._mouseDownData.initialH - mouseY);
 
 	    this.setState({
 	    	isBoxSelecting: true,
 	    	boxWidth: w,
 	    	boxHeight: h,
-	    	boxLeft: Math.min(e.pageX, this._mouseDownData.initialW),
-	    	boxTop: Math.min(e.pageY, this._mouseDownData.initialH)
+	    	boxLeft: Math.min(mouseX, this._mouseDownData.initialW),
+	    	boxTop: Math.min(mouseY, this._mouseDownData.initialH)
 	    });
 
 		if (this.props.selectOnMouseMove) this._throttledSelect(e);
@@ -89,6 +104,7 @@ class SelectableGroup extends React.Component {
 	 * be added, and if so, attach event listeners
 	 */
 	_mouseDown (e) {
+        const { mouseX, mouseY } = this._mousePosition(e);
 		// Disable if target is control by react-dnd
 		if (!!e.target.draggable) return;
 
@@ -109,8 +125,8 @@ class SelectableGroup extends React.Component {
 					right: offsetData.offsetWidth
 				},
 				{
-					top: e.pageY,
-					left: e.pageX,
+					top: mouseY,
+					left: mouseX,
 					offsetWidth: 0,
 					offsetHeight: 0
 				}
@@ -119,10 +135,10 @@ class SelectableGroup extends React.Component {
 		}
 
 		this._mouseDownData = {
-			boxLeft: e.pageX,
-			boxTop: e.pageY,
-	        initialW: e.pageX,
-        	initialH: e.pageY
+			boxLeft: mouseX,
+			boxTop: mouseY,
+	        initialW: mouseX,
+        	initialH: mouseY
 		};
 
 		if(this.props.preventDefault) e.preventDefault();
